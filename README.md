@@ -1,4 +1,4 @@
-# google_drive_uploaad
+# google_drive_upload
 Program that can be used for extracting frames from a video and upload it into google-drive. 
 
 Usage:
