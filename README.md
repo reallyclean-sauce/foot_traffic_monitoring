@@ -1,4 +1,4 @@
-# foot_traffic_monitoring
+# google_drive_uploaad
 Program that can be used for extracting frames from a video and upload it into google-drive. 
 
 Usage:
