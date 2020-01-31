@@ -4,6 +4,9 @@
 Created on Wed Jan 15 16:15:11 2020
 
 @author: jericolinux
+
+Library for accessing google drive
+using the credentials 'client_id.json'
 """
 
 from __future__ import print_function
@@ -18,13 +21,13 @@ import auth
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
-CLIENT_CREDENTIALS = 'credentials.json'
+CLIENT_CREDENTIALS = 'credentials/client_id.json' # Follow the youtube link for creating this file
 
 authInst = auth.auth(SCOPES, CLIENT_CREDENTIALS)
 credentials = authInst.get_credentials()
 drive_service = build('drive', 'v3', credentials=credentials)
 
-
+# List the size most recently modified or accessed files
 def listfiles(size):
     # Call the Drive v3 API
     results = drive_service.files().list(
@@ -37,7 +40,7 @@ def listfiles(size):
         print('Files:')
         for item in items:
             print(u'{0} ({1})'.format(item['name'], item['id']))
-            
+
 def listfolders():
     folderlist = []
     page_token = None
@@ -53,10 +56,6 @@ def listfolders():
 #        if page_token is None:
         break
 
-        
-#    return folderlist
-
-
 def uploadfile(filename, filepath, folder_id, mimetype):
     file_metadata = {
             'name': filename,
@@ -68,29 +67,28 @@ def uploadfile(filename, filepath, folder_id, mimetype):
                                         media_body=media,
                                         fields='id').execute()
     print('File ID: %s' % file.get('id'))
-    
-def createfolder(foldername, folder_id):
-    file_metadata = {
-        'name': foldername, 
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [folder_id]
-    }
+
+def createfolder(foldername, folder_id, if_parent):
+    if if_parent:
+        file_metadata = {
+            'name': foldername,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [folder_id]
+        }
+    else:
+         file_metadata = {
+            'name': foldername,
+            'mimeType': 'application/vnd.google-apps.folder'
+            # 'parents': [folder_id]
+        }
     file = drive_service.files().create(body=file_metadata,
                                         fields='id').execute()
     print ('Folder ID: %s' % file.get('id'))
-    
+
     return file.get('id')
 
 
 
 
 if __name__ == '__main__':
-    filename = 'cifar10.png'
-    filepath = './cifar10.png'
-    img_mime = 'image/png'
-    #uploadfile(filename, filepath, 'image/png')
-    #
-#    folder_id = createfolder('temp')
-    #uploadfile(filename, filepath, folder_id, img_mime)
-    
-    #listfolders()
+    listfiles(20)
